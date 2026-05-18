@@ -28,13 +28,25 @@ source venv/bin/activate          # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-Set your API key in the environment (same shell you use to run scripts or the server):
+Set your API key in one of these ways:
+
+**Option A — `.env` file (recommended locally)**  
+Copy the example and edit:
+
+```bash
+cp .env.example .env
+# Edit .env and set OPENAI_API_KEY=sk-...
+```
+
+The app loads `.env` from the project folder when you run `uvicorn`, `chatbot.py`, or `ingest.py` (via `python-dotenv`).
+
+**Option B — shell only**
 
 ```bash
 export OPENAI_API_KEY="sk-..."    # Windows (cmd): set OPENAI_API_KEY=sk-...
 ```
 
-Do **not** commit `.env` or keys; they are listed in `.gitignore`.
+Do **not** commit `.env` or keys; they are listed in `.gitignore`. You **may** commit `.env.example` (no real secrets).
 
 ## Build the vector index
 
@@ -56,7 +68,7 @@ This creates (or updates) the **`persona`** collection under **`chroma_db/`**.
 uvicorn app:app --reload --host 127.0.0.1 --port 8000
 ```
 
-Open **http://127.0.0.1:8000** . The API key must be set in the **same** process environment as `uvicorn`.
+Open **http://127.0.0.1:8000** . The API key must be set in the **same** process environment as `uvicorn`. In the chat box, sending **exit** clears the thread and starts a new session (same idea as the terminal CLI).
 
 **Terminal UI**:
 

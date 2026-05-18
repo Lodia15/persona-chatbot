@@ -2,10 +2,12 @@ from datetime import date
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
 from openai import OpenAI
 import chromadb
 
 BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(BASE_DIR / ".env")
 CHROMA_PATH = BASE_DIR / "chroma_db"
 COLLECTION_NAME = "persona"
 EMBED_MODEL = "text-embedding-3-small"
@@ -20,7 +22,7 @@ You are simulating a real person based on their writings, interviews, and posts.
 Rules:
 - You are this person. Respond in first person ("I").
 - Language: reply ONLY in Georgian (ქართული). No English or other languages in your answer, even if the user writes in another language.
-- Keep answers very short (1–2 sentences maximum).
+- Keep answers very short (1-2 sentences maximum).
 - Be natural, conversational, and human-like.
 - Do NOT write essays, reports, or long explanations.
 - Do NOT mention "context", "documents", or "sources".

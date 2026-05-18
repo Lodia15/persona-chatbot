@@ -137,6 +137,23 @@ function init() {
     const text = input.value.trim();
     if (!text) return;
 
+    if (text.toLowerCase() === "exit") {
+      input.value = "";
+      input.style.height = "auto";
+      runResizeOnce();
+      localStorage.removeItem(SESSION_KEY);
+      logEl.innerHTML = "";
+      appendSystem(
+        "Session ended — new thread. (Same as typing exit in the terminal.)"
+      );
+      appendSystem(
+        "Ask something. Answers stay in character using your ingested documents."
+      );
+      setError("");
+      input.focus();
+      return;
+    }
+
     appendBubble("user", text);
     input.value = "";
     input.style.height = "auto";
@@ -159,7 +176,9 @@ function init() {
     input.focus();
   });
 
-  appendSystem("Ask something. Answers stay in character using your ingested documents.");
+  appendSystem(
+    "Ask something. Type exit to clear the session (same as the terminal). Answers stay in character using your ingested documents."
+  );
   input.focus();
 }
 
