@@ -105,6 +105,12 @@ Defaults live in **`persona_engine.py`**:
 - Collection name: `persona`
 - Retrieval: top **10** chunks per question
 
+## Heroku
+
+Dyno disks are **ephemeral**: anything written during a **`release:`** command does **not** reliably appear on **`web`** dynos, so `release: python ingest.py` will not fix “collection persona not found”.
+
+This repo uses **`scripts/heroku-web.sh`**: on each **web** dyno boot, if `chroma_db/` is empty it runs **`ingest.py`**, then starts **`uvicorn`**. Set **`OPENAI_API_KEY`** (and optional **`PERSONA_CHAT_MODEL`**) in Heroku **Config Vars**. After a **dyno restart** the index is rebuilt once (OpenAI embedding cost on each cold boot).
+
 ## Git / GitHub
 
 Commit source, `static/`, `requirements.txt`, and `.gitignore`. Do **not** commit **`venv/`**, **`chroma_db/`**, or secrets. Review **`documents/`** for anything you do not want public before pushing.
