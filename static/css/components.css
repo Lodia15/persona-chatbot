@@ -1,0 +1,106 @@
+.btn {
+  font-family: inherit;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+}
+
+.btn--ghost {
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  padding: 0.45rem 0.85rem;
+}
+
+.btn--ghost:hover:not(:disabled) {
+  color: var(--color-text);
+  border-color: var(--color-border-strong);
+  background: var(--color-surface-hover);
+}
+
+.btn--primary {
+  border: none;
+  background: linear-gradient(165deg, #5f93f2, #4a6fc4);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0 1.1rem;
+  min-height: 2.75rem;
+  border-radius: var(--radius-md);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.btn--primary:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+
+.btn--primary:disabled {
+  opacity: 0.48;
+}
+
+.field {
+  flex: 1;
+  min-width: 0;
+}
+
+.field__input {
+  width: 100%;
+  resize: none;
+  min-height: 2.75rem;
+  max-height: var(--composer-max-height);
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  line-height: 1.4;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.field__input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.85;
+}
+
+.field__input:hover:not(:disabled) {
+  border-color: var(--color-border-strong);
+}
+
+.field__input:focus {
+  outline: none;
+  border-color: #4a5f8a;
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+.field__input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.alert {
+  max-width: var(--content-max);
+  margin: 0 auto var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--color-error);
+  background: var(--color-error-bg);
+  border: 1px solid rgba(240, 160, 160, 0.25);
+  border-radius: var(--radius-md);
+}
+
+.alert[hidden] {
+  display: none !important;
+}

@@ -10,8 +10,8 @@ A small **retrieval-augmented (RAG)** chatbot that answers in **first person** a
 | `ingest.py` | Chunks those files, embeds them, writes to `chroma_db/`. |
 | `persona_engine.py` | Shared logic: embed query, search Chroma, call the chat model. |
 | `chatbot.py` | Terminal chat loop. |
-| `app.py` | FastAPI server + `/api/chat` + static web UI. |
-| `static/index.html` | Browser UI. |
+| `app.py` | FastAPI server + `/api/chat` + serves `/` and `/static/…`. |
+| `static/` | Web UI: `index.html`, `css/` (tokens, layout, components, chat), `js/` (config, ui, chat module). |
 | `transcription.py` | Optional helper: fetch a YouTube transcript into `documents/`. |
 
 ## Requirements

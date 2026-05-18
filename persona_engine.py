@@ -9,7 +9,6 @@ BASE_DIR = Path(__file__).resolve().parent
 CHROMA_PATH = BASE_DIR / "chroma_db"
 COLLECTION_NAME = "persona"
 EMBED_MODEL = "text-embedding-3-small"
-#CHAT_MODEL = "gpt-4.1-mini"
 # Override with env, e.g. export PERSONA_CHAT_MODEL=gpt-4.1-mini for lower cost
 CHAT_MODEL = os.environ.get("PERSONA_CHAT_MODEL", "gpt-4o")
 

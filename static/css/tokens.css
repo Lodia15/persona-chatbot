@@ -1,0 +1,40 @@
+:root {
+  --color-bg: #0c0e12;
+  --color-bg-elevated: #12151c;
+  --color-surface: #181c24;
+  --color-surface-hover: #1e2330;
+  --color-border: #2a3140;
+  --color-border-strong: #3d475a;
+  --color-text: #e8eaef;
+  --color-text-muted: #8b95a8;
+  --color-accent: #6c9eff;
+  --color-accent-soft: rgba(108, 158, 255, 0.14);
+  --color-user-bubble: #243044;
+  --color-user-border: #334056;
+  --color-bot-bubble: #1a1f2a;
+  --color-error: #f0a0a0;
+  --color-error-bg: rgba(240, 160, 160, 0.08);
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-size-sm: 0.8rem;
+  --font-size-base: 0.95rem;
+  --font-size-title: 1.125rem;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 14px;
+  --radius-full: 9999px;
+
+  --shadow-header: 0 1px 0 rgba(255, 255, 255, 0.04);
+  --shadow-bubble: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+
+  --content-max: 42rem;
+  --composer-max-height: 10rem;
+}

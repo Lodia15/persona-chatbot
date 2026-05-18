@@ -5,6 +5,7 @@ import chromadb.errors
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from openai import OpenAIError
 from pydantic import BaseModel, Field
 
@@ -85,3 +86,10 @@ def index() -> FileResponse:
     if not path.is_file():
         raise HTTPException(status_code=404, detail="UI not found.")
     return FileResponse(path)
+
+
+app.mount(
+    "/static",
+    StaticFiles(directory=str(STATIC_DIR)),
+    name="static",
+)
