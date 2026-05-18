@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Persona chat</title>
+  <style>
+    :root {
+      --bg: #0f1115;
+      --surface: #181c24;
+      --border: #2a3140;
+      --text: #e8eaef;
+      --muted: #8b95a8;
+      --accent: #6c9eff;
+      --user-bubble: #243044;
+      --bot-bubble: #1e242f;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(1200px 800px at 20% -10%, #1a2233 0%, var(--bg) 55%);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(15, 17, 21, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    header p {
+      margin: 0.15rem 0 0;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .brand { min-width: 0; }
+    button.ghost {
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.8rem;
+      padding: 0.45rem 0.75rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button.ghost:hover {
+      color: var(--text);
+      border-color: #3d475a;
+    }
+    #log {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      max-width: 720px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .row {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      max-width: 85%;
+    }
+    .row.user { align-self: flex-end; align-items: flex-end; }
+    .bubble {
+      padding: 0.65rem 0.85rem;
+      border-radius: 14px;
+      line-height: 1.45;
+      font-size: 0.95rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+      border: 1px solid var(--border);
+    }
+    .row.user .bubble {
+      background: var(--user-bubble);
+      border-color: #334056;
+      border-bottom-right-radius: 4px;
+    }
+    .row.bot .bubble {
+      background: var(--bot-bubble);
+      border-bottom-left-radius: 4px;
+    }
+    .meta {
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+      padding: 0 0.2rem;
+    }
+    .system {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.78rem;
+      padding: 0.5rem;
+    }
+    footer {
+      padding: 0.85rem 1rem 1.1rem;
+      border-top: 1px solid var(--border);
+      background: rgba(15, 17, 21, 0.92);
+      backdrop-filter: blur(8px);
+    }
+    .composer {
+      max-width: 720px;
+      margin: 0 auto;
+      display: flex;
+      gap: 0.6rem;
+      align-items: flex-end;
+    }
+    textarea {
+      flex: 1;
+      resize: none;
+      min-height: 44px;
+      max-height: 160px;
+      padding: 0.65rem 0.85rem;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font: inherit;
+      line-height: 1.4;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #4a5f8a;
+      box-shadow: 0 0 0 2px rgba(108, 158, 255, 0.15);
+    }
+    button.send {
+      border: none;
+      background: linear-gradient(145deg, #5b8def, #4a72c4);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 0 1rem;
+      min-height: 44px;
+      border-radius: 12px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    button.send:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .error {
+      max-width: 720px;
+      margin: 0 auto 0.5rem;
+      font-size: 0.82rem;
+      color: #f09090;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <h1>Persona chat</h1>
+      <p>Short answers in character · local RAG</p>
+    </div>
+    <button type="button" class="ghost" id="newChat" title="Start a fresh thread">New chat</button>
+  </header>
+  <div id="log" aria-live="polite"></div>
+  <footer>
+    <div class="error" id="err" hidden></div>
+    <form class="composer" id="form">
+      <label for="msg" class="visually-hidden">Message</label>
+      <textarea id="msg" rows="1" placeholder="Message…" autocomplete="off"></textarea>
+      <button type="submit" class="send" id="send">Send</button>
+    </form>
+  </footer>
+  <style>.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }</style>
+  <script>
+    const SESSION_KEY = "persona_chat_session_id";
+    const logEl = document.getElementById("log");
+    const form = document.getElementById("form");
+    const input = document.getElementById("msg");
+    const sendBtn = document.getElementById("send");
+    const errEl = document.getElementById("err");
+    const newChatBtn = document.getElementById("newChat");
+
+    function sessionId() {
+      let id = localStorage.getItem(SESSION_KEY);
+      if (!id) {
+        id = crypto.randomUUID();
+        localStorage.setItem(SESSION_KEY, id);
+      }
+      return id;
+    }
+
+    function resetSession() {
+      localStorage.removeItem(SESSION_KEY);
+      logEl.innerHTML = "";
+      appendSystem("New conversation.");
+    }
+
+    function appendSystem(text) {
+      const d = document.createElement("div");
+      d.className = "system";
+      d.textContent = text;
+      logEl.appendChild(d);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function appendBubble(role, text) {
+      const row = document.createElement("div");
+      row.className = "row " + (role === "user" ? "user" : "bot");
+      const b = document.createElement("div");
+      b.className = "bubble";
+      b.textContent = text;
+      row.appendChild(b);
+      const m = document.createElement("div");
+      m.className = "meta";
+      m.textContent = role === "user" ? "You" : "Persona";
+      row.appendChild(m);
+      logEl.appendChild(row);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function setError(msg) {
+      if (!msg) {
+        errEl.hidden = true;
+        errEl.textContent = "";
+        return;
+      }
+      errEl.hidden = false;
+      errEl.textContent = msg;
+    }
+
+    async function sendMessage(text) {
+      setError("");
+      sendBtn.disabled = true;
+      const sid = sessionId();
+      let res;
+      try {
+        res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text, session_id: sid }),
+        });
+      } catch (e) {
+        const m = e && e.message ? e.message : String(e);
+        if (/failed to fetch|load failed|networkerror/i.test(m)) {
+          throw new Error("Cannot reach the API. Start the server from the project folder: uvicorn app:app --reload --host 127.0.0.1 --port 8000");
+        }
+        throw new Error(m);
+      }
+      const raw = await res.text();
+      let data = {};
+      try {
+        data = raw ? JSON.parse(raw) : {};
+      } catch {
+        throw new Error(`HTTP ${res.status}: response was not JSON. ${raw.slice(0, 240)}`);
+      }
+      if (!res.ok) {
+        const detail = data.detail;
+        let msg;
+        if (Array.isArray(detail)) {
+          msg = detail.map((d) => (d && (d.msg || d.message)) || String(d)).join(" ");
+        } else if (typeof detail === "string") {
+          msg = detail;
+        } else if (detail && typeof detail === "object") {
+          msg = JSON.stringify(detail);
+        } else {
+          msg = `HTTP ${res.status}`;
+        }
+        throw new Error(msg);
+      }
+      if (typeof data.reply !== "string") {
+        throw new Error("Bad response: missing reply.");
+      }
+      if (data.session_id) localStorage.setItem(SESSION_KEY, data.session_id);
+      return data.reply;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (!text) return;
+      appendBubble("user", text);
+      input.value = "";
+      input.style.height = "auto";
+      try {
+        const reply = await sendMessage(text);
+        appendBubble("bot", reply);
+      } catch (err) {
+        setError(err.message || String(err));
+      } finally {
+        sendBtn.disabled = false;
+        input.focus();
+      }
+    });
+
+    newChatBtn.addEventListener("click", () => {
+      resetSession();
+      input.focus();
+    });
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        form.requestSubmit();
+      }
+    });
+
+    input.addEventListener("input", () => {
+      input.style.height = "auto";
+      input.style.height = Math.min(input.scrollHeight, 160) + "px";
+    });
+
+    appendSystem("Ask something. Answers stay in character using your ingested documents.");
+    input.focus();
+  </script>
+</body>
+</html>
