@@ -82,10 +82,16 @@ You do not need both at once; they use the same engine and the same `chroma_db/`
 Defaults live in **`persona_engine.py`**:
 
 - Embedding model: `text-embedding-3-small`
-- Chat model: `gpt-4.1-mini`
+- Chat model: **`gpt-4o`** (default). For a cheaper/faster option:
+
+  ```bash
+  export PERSONA_CHAT_MODEL=gpt-4.1-mini
+  ```
+
+  Set `PERSONA_CHAT_MODEL` to any chat model your API key supports (see [OpenAI models](https://platform.openai.com/docs/models)).
 - Chroma path: `chroma_db/` next to the project files
 - Collection name: `persona`
-- Retrieval: top **5** chunks per question
+- Retrieval: top **10** chunks per question
 
 ## Git / GitHub
 
